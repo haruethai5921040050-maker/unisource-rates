@@ -15,7 +15,7 @@
 </head>
 <body class="bg-[#F8FAFC] text-slate-800 min-h-screen flex flex-col m-0 p-0 overflow-x-hidden">
 
-  <!-- Header (พื้นหลังสีน้ำเงินเข้ม) -->
+  <!-- Header -->
   <header class="bg-blue-950 text-white shadow-md border-b border-blue-900 w-full">
     <div class="w-full px-4 sm:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
       <div class="flex items-center space-x-4 w-full sm:w-auto justify-between sm:justify-start">
@@ -46,7 +46,7 @@
           <h2 class="font-bold text-slate-900 text-base">ราคาน้ำมัน ปตท.</h2>
           <span class="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-semibold border border-blue-100">กทม.</span>
         </div>
-        <p id="oilUpdateTime" class="text-xs text-slate-500 mb-4 pb-3 border-b border-slate-100">กำลังโหลด...</p>
+        <p id="oilUpdateTime" class="text-xs text-slate-500 mb-4 pb-3 border-b border-slate-100">อัพเดตล่าสุด วันนี้</p>
         <div id="oilPriceList" class="space-y-3">
           <div class="animate-pulse space-y-3">
             <div class="h-12 bg-slate-100 rounded-xl"></div>
@@ -204,17 +204,15 @@
 
     let rawJobData = [];
 
-    // ฟังก์ชันช่วยดึงวันที่ตามข้อความจริง ไม่คำนวณไทม์โซน
+    // ฟังก์ชันช่วยจัดรูปแบบวันที่ในตารางให้อ่านง่าย
     function formatDateToThai(dateInput) {
       if (!dateInput) return '';
       let str = String(dateInput).trim();
       
-      // ถ้ามีตัว T ให้ตัดเฉพาะก้อน YYYY-MM-DD ข้างหน้า
       if (str.includes('T')) {
         str = str.split('T')[0];
       }
       
-      // ถ้าอยู่ในรูปแบบ YYYY-MM-DD ให้สลับเป็น DD/MM/YYYY
       if (str.includes('-')) {
         let parts = str.split('-');
         if (parts.length === 3 && parts[0].length === 4) {
@@ -243,11 +241,8 @@
       fetch(`${API_URL}?action=getOilPrices`)
         .then(response => response.json())
         .then(res => {
-          let timeText = formatDateToThai(res.updateTime);
-          if (!timeText.includes('เวลา')) {
-            timeText += ' เวลา 06.00 น.';
-          }
-          document.getElementById('oilUpdateTime').innerText = `อัพเดตล่าสุด ${timeText}`;
+          // ล็อคให้แสดงคำว่า "อัพเดตล่าสุด วันนี้" เสมอ ตัดปัญหาเรื่องวันที่ออก
+          document.getElementById('oilUpdateTime').innerText = `อัพเดตล่าสุด วันนี้`;
           let html = '';
           res.prices.forEach(item => {
             let badgeColor = 'bg-slate-100 text-slate-700';
