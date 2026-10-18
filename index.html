@@ -204,27 +204,14 @@
 
     let rawJobData = [];
 
-    // ฟังก์ชันช่วยจัดรูปแบบวันที่ในตารางให้อ่านง่าย
-    function formatDateToThai(dateInput) {
-      if (!dateInput) return '';
-      let str = String(dateInput).trim();
-      
-      if (str.includes('T')) {
-        str = str.split('T')[0];
-      }
-      
-      if (str.includes('-')) {
-        let parts = str.split('-');
-        if (parts.length === 3 && parts[0].length === 4) {
-          return `${parts[2].padStart(2, '0')}/${parts[1].padStart(2, '0')}/${parts[0]}`;
-        }
-      }
-      
-      return str;
-    }
-
     window.onload = function() {
-      document.getElementById('recordDate').valueAsDate = new Date();
+      // กำหนดค่าเริ่มต้นของช่องวันที่เป็นวันนี้
+      let today = new Date();
+      let yyyy = today.getFullYear();
+      let mm = String(today.getMonth() + 1).padStart(2, '0');
+      let dd = String(today.getDate()).padStart(2, '0');
+      document.getElementById('recordDate').value = `${yyyy}-${mm}-${dd}`;
+      
       loadData();
       loadOilPrices();
     };
@@ -241,7 +228,6 @@
       fetch(`${API_URL}?action=getOilPrices`)
         .then(response => response.json())
         .then(res => {
-          // ล็อคให้แสดงคำว่า "อัพเดตล่าสุด วันนี้" เสมอ ตัดปัญหาเรื่องวันที่ออก
           document.getElementById('oilUpdateTime').innerText = `อัพเดตล่าสุด วันนี้`;
           let html = '';
           res.prices.forEach(item => {
@@ -322,7 +308,20 @@
       let html = '';
       data.forEach(row => {
         let priceNum = parseFloat(row.jobPrice) || 0;
-        let displayDate = formatDateToThai(row.recordDate);
+        
+        // ดึงข้อความวันที่มาแสดงผลตรงๆ ไม่ต้องคำนวณไทม์โซนหรือแปลงค่าใดๆ
+        let rawDate = String(row.recordDate || '');
+        let displayDate = rawDate;
+
+        // ถ้ากรณีที่ค่าเก่าในชีทเคยติดรูปแบบ ISO (2026-10-18T...) ให้ตัดเอาเฉพาะข้อความส่วนหน้ามาจัดเป็น DD/MM/YYYY
+        if (rawDate.includes('T')) {
+          let datePart = rawDate.split('T')[0];
+          let p = datePart.split('-');
+          if (p.length === 3) {
+            displayDate = `${p[2]}/${p[1]}/${p[0]}`;
+          }
+        }
+
         html += `
           <tr class="hover:bg-slate-50 transition duration-150">
             <td class="py-3.5 px-4 pl-6 font-medium text-slate-600 text-xs">${displayDate}</td>
@@ -348,11 +347,19 @@
       btn.disabled = true;
       btn.innerHTML = `กำลังบันทึก...`;
 
-      let rawDateVal = document.getElementById('recordDate').value;
-      let formattedSaveDate = formatDateToThai(rawDateVal);
+      // ดึงค่า YYYY-MM-DD จากปฏิทิน แล้วแปลงเป็นข้อความวันที่ เช่น "18/10/2026" ก่อนส่งไปบันทึก
+      let rawDateVal = document.getElementById('recordDate').value; 
+      let textDate = rawDateVal;
+      
+      if (rawDateVal && rawDateVal.includes('-')) {
+        let p = rawDateVal.split('-');
+        if (p.length === 3) {
+          textDate = `${p[2]}/${p[1]}/${p[0]}`; // กลายเป็นข้อความ "18/10/2026" ทันที
+        }
+      }
 
       let formData = {
-        recordDate: formattedSaveDate,
+        recordDate: textDate, // ส่งเป็นข้อความตรงๆ
         clientName: document.getElementById('clientName').value,
         material: document.getElementById('material').value,
         deliveryPoint: document.getElementById('deliveryPoint').value,
@@ -372,7 +379,13 @@
         if(res.success) {
           closeModal();
           document.getElementById('jobForm').reset();
-          document.getElementById('recordDate').valueAsDate = new Date();
+          
+          let today = new Date();
+          let yyyy = today.getFullYear();
+          let mm = String(today.getMonth() + 1).padStart(2, '0');
+          let dd = String(today.getDate()).padStart(2, '0');
+          document.getElementById('recordDate').value = `${yyyy}-${mm}-${dd}`;
+          
           loadData();
         } else {
           alert('เกิดข้อผิดพลาด: ' + res.message);
