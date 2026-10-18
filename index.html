@@ -11,28 +11,21 @@
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
   </style>
 </head>
-<body class="bg-[#F8FAFC] text-slate-800 min-h-screen flex flex-col">
+<body class="bg-[#F8FAFC] text-slate-800 min-h-screen flex flex-col m-0 p-0 overflow-x-hidden">
 
   <!-- Header -->
-  <header class="bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 text-white shadow-md border-b border-blue-900">
-    <div class="max-w-[96%] mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+  <header class="bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 text-white shadow-md border-b border-blue-900 w-full">
+    <div class="w-full px-4 sm:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
       <div class="flex items-center space-x-4 w-full sm:w-auto justify-between sm:justify-start">
-        
-        <!-- ชื่อบริษัท 2 บรรทัด (ไม่มีอิโมจิ) -->
         <div class="flex-shrink-0 leading-none">
           <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight text-white m-0 p-0">UNISOURCE</h1>
           <span class="text-xs sm:text-sm font-semibold text-blue-200 tracking-wider block mt-1">LAND FILL</span>
         </div>
-
-        <!-- เส้นแบ่งแนวตั้ง -->
         <div class="hidden sm:block h-10 w-px bg-blue-700/60"></div>
-
-        <!-- ชื่อระบบด้านขวา -->
         <div>
           <h2 class="text-base sm:text-lg font-bold text-white tracking-wide">เรทราคางานเงินสด</h2>
           <p class="text-[11px] sm:text-xs text-blue-200 font-medium">ระบบจัดการข้อมูลภายใน UNS</p>
         </div>
-
       </div>
       <button onclick="openModal()" class="w-full sm:w-auto bg-white text-blue-950 hover:bg-blue-50 font-semibold px-5 py-2.5 rounded-xl shadow-md transition transform active:scale-95 flex items-center justify-center gap-2 text-sm border border-blue-100">
         บันทึกเรทราคาใหม่
@@ -41,7 +34,7 @@
   </header>
 
   <!-- Main Content Layout -->
-  <main class="max-w-[96%] mx-auto px-2 sm:px-4 py-6 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+  <main class="w-full px-4 sm:px-8 py-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
     
     <!-- ฝั่งซ้าย: ราคาน้ำมัน ปตท. (3/12) -->
     <aside class="lg:col-span-3 space-y-4">
@@ -51,14 +44,9 @@
           <h2 class="font-bold text-slate-900 text-base">ราคาน้ำมัน ปตท.</h2>
           <span class="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-semibold border border-blue-100">กทม.</span>
         </div>
-        
-        <p id="oilUpdateTime" class="text-xs text-slate-500 mb-4 pb-3 border-b border-slate-100">
-          กำลังโหลด...
-        </p>
-
+        <p id="oilUpdateTime" class="text-xs text-slate-500 mb-4 pb-3 border-b border-slate-100">กำลังโหลด...</p>
         <div id="oilPriceList" class="space-y-3">
           <div class="animate-pulse space-y-3">
-            <div class="h-12 bg-slate-100 rounded-xl"></div>
             <div class="h-12 bg-slate-100 rounded-xl"></div>
             <div class="h-12 bg-slate-100 rounded-xl"></div>
           </div>
@@ -66,11 +54,9 @@
       </div>
     </aside>
 
-    <!-- ฝั่งขวา: หน้าหลักแสดงรายการเรทราคางาน (9/12 ขยายกว้างพิเศษ) -->
+    <!-- ฝั่งขวา: รายการเรทราคางาน (9/12) -->
     <section class="lg:col-span-9 space-y-4">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        
-        <!-- แถบเครื่องมือ ค้นหา/ฟิลเตอร์ -->
         <div class="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50 space-y-3">
           <div class="flex justify-between items-center">
             <div>
@@ -80,18 +66,15 @@
             <span id="totalCount" class="text-xs bg-slate-200 text-slate-700 font-semibold px-2.5 py-1 rounded-lg">0 รายการ</span>
           </div>
 
-          <!-- ฟิลเตอร์ -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 border-t border-slate-200/60">
             <div>
               <input type="text" id="searchInput" oninput="applyFilters()" placeholder="ค้นหา (ชื่อ, วัสดุ, จุดลง...)" class="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white shadow-sm">
             </div>
-
             <div>
               <select id="filterClient" onchange="applyFilters()" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white shadow-sm text-slate-700">
                 <option value="">-- ผู้ว่าจ้างทั้งหมด --</option>
               </select>
             </div>
-
             <div>
               <select id="filterOilRange" onchange="applyFilters()" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white shadow-sm text-slate-700">
                 <option value="">-- เรทราคาน้ำมันทั้งหมด --</option>
@@ -104,20 +87,19 @@
           </div>
         </div>
 
-        <!-- ตารางแสดงรายการ -->
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse text-sm">
             <thead>
               <tr class="bg-slate-100/80 text-slate-600 uppercase text-[11px] tracking-wider font-semibold border-b border-slate-200">
-                <th class="py-3 px-4 pl-6">วันที่บันทึก</th>
-                <th class="py-3 px-4">ผู้ว่าจ้าง</th>
-                <th class="py-3 px-4">วัสดุ</th>
-                <th class="py-3 px-4">จุดลง</th>
-                <th class="py-3 px-4">ช่วงราคาน้ำมัน</th>
-                <th class="py-3 px-4 text-right">ราคางาน</th>
-                <th class="py-3 px-4 text-center">หน่วย</th>
-                <th class="py-3 px-4">ผู้บันทึก</th>
-                <th class="py-3 px-4 text-center pr-6">Map</th>
+                <th class="py-3.5 px-4 pl-6">วันที่บันทึก</th>
+                <th class="py-3.5 px-4">ผู้ว่าจ้าง</th>
+                <th class="py-3.5 px-4">วัสดุ</th>
+                <th class="py-3.5 px-4">จุดลง</th>
+                <th class="py-3.5 px-4">ช่วงราคาน้ำมัน</th>
+                <th class="py-3.5 px-4 text-right">ราคางาน</th>
+                <th class="py-3.5 px-4 text-center">หน่วย</th>
+                <th class="py-3.5 px-4">ผู้บันทึก</th>
+                <th class="py-3.5 px-4 text-center pr-6">Map</th>
               </tr>
             </thead>
             <tbody id="jobTableBody" class="divide-y divide-slate-100 text-slate-700">
@@ -129,19 +111,14 @@
         </div>
       </div>
     </section>
-
   </main>
 
   <!-- Modal บันทึกเรทราคาใหม่ -->
   <div id="jobModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full overflow-hidden border border-slate-100 animate-in fade-in zoom-in duration-200">
       <div class="bg-gradient-to-r from-blue-950 to-indigo-950 px-6 py-4 text-white flex justify-between items-center">
-        <h3 class="font-bold text-base flex items-center gap-2">
-          บันทึกเรทราคางานใหม่
-        </h3>
-        <button onclick="closeModal()" class="text-blue-200 hover:text-white transition">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
+        <h3 class="font-bold text-base flex items-center gap-2">บันทึกเรทราคางานใหม่</h3>
+        <button onclick="closeModal()" class="text-blue-200 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
 
       <form id="jobForm" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
@@ -220,8 +197,11 @@
     </div>
   </div>
 
-  <!-- Script Logic -->
+  <!-- Script Logic สำหรับ GitHub Pages -->
   <script>
+    // ⚠️ แทนที่ลิงก์ด้านล่างนี้ด้วย Web App URL ล่าสุดจาก Google Apps Script ของคุณ
+    const API_URL = "YOUR_WEB_APP_URL_HERE";
+
     let rawJobData = [];
 
     window.onload = function() {
@@ -239,54 +219,52 @@
     }
 
     function loadOilPrices() {
-      google.script.run.withSuccessHandler(function(res) {
-        document.getElementById('oilUpdateTime').innerHTML = `อัพเดตล่าสุด ${res.updateTime}`;
-        
-        let html = '';
-        res.prices.forEach(item => {
-          let badgeColor = 'bg-slate-100 text-slate-700';
-          let statusText = item.status;
-          if (item.status === 'เพิ่มขึ้น') {
-            badgeColor = 'bg-rose-50 text-rose-700 border border-rose-100';
-          } else if (item.status === 'ลดลง') {
-            badgeColor = 'bg-emerald-50 text-emerald-700 border border-emerald-100';
-          } else {
-            badgeColor = 'bg-amber-50 text-amber-700 border border-amber-100';
-          }
+      fetch(`${API_URL}?action=getOilPrices`)
+        .then(response => response.json())
+        .then(res => {
+          document.getElementById('oilUpdateTime').innerText = `อัพเดตล่าสุด ${res.updateTime}`;
+          let html = '';
+          res.prices.forEach(item => {
+            let badgeColor = 'bg-slate-100 text-slate-700';
+            if (item.status === 'เพิ่มขึ้น') badgeColor = 'bg-rose-50 text-rose-700 border border-rose-100';
+            else if (item.status === 'ลดลง') badgeColor = 'bg-emerald-50 text-emerald-700 border border-emerald-100';
+            else badgeColor = 'bg-amber-50 text-amber-700 border border-amber-100';
 
-          html += `
-            <div class="p-3 bg-slate-50/70 rounded-xl border border-slate-100 flex flex-col gap-1">
-              <div class="text-xs font-bold text-slate-800">${item.fuelType}</div>
-              <div class="flex justify-between items-center">
-                <span class="text-sm font-extrabold text-blue-900">${item.price.toFixed(2)} <span class="text-[10px] font-normal text-slate-500">บาท/ลิตร</span></span>
-                <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md ${badgeColor}">
-                  ${statusText}
-                </span>
+            html += `
+              <div class="p-3 bg-slate-50/70 rounded-xl border border-slate-100 flex flex-col gap-1">
+                <div class="text-xs font-bold text-slate-800">${item.fuelType}</div>
+                <div class="flex justify-between items-center">
+                  <span class="text-sm font-extrabold text-blue-900">${item.price.toFixed(2)} <span class="text-[10px] font-normal text-slate-500">บาท/ลิตร</span></span>
+                  <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md ${badgeColor}">${item.status}</span>
+                </div>
               </div>
-            </div>
-          `;
-        });
-        document.getElementById('oilPriceList').innerHTML = html;
-      }).getOilPrices();
+            `;
+          });
+          document.getElementById('oilPriceList').innerHTML = html;
+        })
+        .catch(err => console.error('Error loading oil prices:', err));
     }
 
     function loadData() {
-      google.script.run.withSuccessHandler(function(data) {
-        rawJobData = data || [];
-        populateClientDropdown(rawJobData);
-        applyFilters();
-      }).getJobRates();
+      fetch(`${API_URL}?action=getJobRates`)
+        .then(response => response.json())
+        .then(data => {
+          rawJobData = data || [];
+          populateClientDropdown(rawJobData);
+          applyFilters();
+        })
+        .catch(err => {
+          console.error('Error loading job rates:', err);
+          document.getElementById('jobTableBody').innerHTML = `<tr><td colspan="9" class="p-8 text-center text-rose-500">ไม่สามารถโหลดข้อมูลได้ กรุณาตรวจสอบ URL API</td></tr>`;
+        });
     }
 
     function populateClientDropdown(data) {
       let clientSelect = document.getElementById('filterClient');
       let currentVal = clientSelect.value;
       let clients = [...new Set(data.map(item => item.clientName).filter(Boolean))];
-      
       let html = '<option value="">-- ผู้ว่าจ้างทั้งหมด --</option>';
-      clients.forEach(client => {
-        html += `<option value="${client}">${client}</option>`;
-      });
+      clients.forEach(client => { html += `<option value="${client}">${client}</option>`; });
       clientSelect.innerHTML = html;
       clientSelect.value = currentVal;
     }
@@ -324,7 +302,6 @@
       let html = '';
       data.forEach(row => {
         let priceNum = parseFloat(row.jobPrice) || 0;
-
         html += `
           <tr class="hover:bg-slate-50 transition duration-150">
             <td class="py-3.5 px-4 pl-6 font-medium text-slate-600 text-xs">${row.recordDate || ''}</td>
@@ -362,20 +339,28 @@
         mapLink: document.getElementById('mapLink').value
       };
 
-      google.script.run.withSuccessHandler(function(res) {
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(formData)
+      })
+      .then(response => response.json())
+      .then(res => {
         if(res.success) {
           closeModal();
           document.getElementById('jobForm').reset();
           document.getElementById('recordDate').valueAsDate = new Date();
           loadData();
+        } else {
+          alert('เกิดข้อผิดพลาด: ' + res.message);
         }
         btn.disabled = false;
         btn.innerHTML = `บันทึกข้อมูล`;
-      }).withFailureHandler(function(err) {
-        alert('เกิดข้อผิดพลาด: ' + err.message);
+      })
+      .catch(err => {
+        alert('เกิดข้อผิดพลาดในการเชื่อมต่อ: ' + err);
         btn.disabled = false;
         btn.innerHTML = `บันทึกข้อมูล`;
-      }).addJobRate(formData);
+      });
     }
   </script>
 </body>
