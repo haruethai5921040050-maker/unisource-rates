@@ -327,7 +327,10 @@
       let html = '';
       data.forEach(row => {
         let priceNum = parseFloat(row.jobPrice) || 0;
-        let displayDate = formatDateToThai(row.recordDate);
+        
+        // ใช้ค่า recordDate ตรงๆ จาก Google Sheets แบบไม่แต่งเพิ่ม
+        let displayDate = row.recordDate || '';
+
         html += `
           <tr class="hover:bg-slate-50 transition duration-150">
             <td class="py-3.5 px-4 pl-6 font-medium text-slate-600 text-xs">${displayDate}</td>
