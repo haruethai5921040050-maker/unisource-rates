@@ -204,13 +204,19 @@
 
     let rawJobData = [];
 
+    // ฟังก์ชันคืนค่าวันที่ปัจจุบันตามโซนเวลาไทย (Asia/Bangkok)
+    function getThaiTodayYMD() {
+      let now = new Date();
+      let thaiTime = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Bangkok"}));
+      let yyyy = thaiTime.getFullYear();
+      let mm = String(thaiTime.getMonth() + 1).padStart(2, '0');
+      let dd = String(thaiTime.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
     window.onload = function() {
-      // กำหนดค่าเริ่มต้นของช่องวันที่เป็นวันนี้
-      let today = new Date();
-      let yyyy = today.getFullYear();
-      let mm = String(today.getMonth() + 1).padStart(2, '0');
-      let dd = String(today.getDate()).padStart(2, '0');
-      document.getElementById('recordDate').value = `${yyyy}-${mm}-${dd}`;
+      // ตั้งค่าเริ่มต้นช่องปฏิทินให้เป็นเวลาไทย
+      document.getElementById('recordDate').value = getThaiTodayYMD();
       
       loadData();
       loadOilPrices();
@@ -308,12 +314,10 @@
       let html = '';
       data.forEach(row => {
         let priceNum = parseFloat(row.jobPrice) || 0;
-        
-        // ดึงข้อความวันที่มาแสดงผลตรงๆ ไม่ต้องคำนวณไทม์โซนหรือแปลงค่าใดๆ
         let rawDate = String(row.recordDate || '');
         let displayDate = rawDate;
 
-        // ถ้ากรณีที่ค่าเก่าในชีทเคยติดรูปแบบ ISO (2026-10-18T...) ให้ตัดเอาเฉพาะข้อความส่วนหน้ามาจัดเป็น DD/MM/YYYY
+        // ดึงเฉพาะตัวอักษรวันที่ DD/MM/YYYY หรือสลับ YYYY-MM-DD แบบไม่คำนวณไทม์โซนซ้ำ
         if (rawDate.includes('T')) {
           let datePart = rawDate.split('T')[0];
           let p = datePart.split('-');
@@ -347,19 +351,19 @@
       btn.disabled = true;
       btn.innerHTML = `กำลังบันทึก...`;
 
-      // ดึงค่า YYYY-MM-DD จากปฏิทิน แล้วแปลงเป็นข้อความวันที่ เช่น "18/10/2026" ก่อนส่งไปบันทึก
+      // อ่านข้อความตรงๆ จากช่องปฏิทินที่เลือก (เช่น 2026-10-18) โดยตรง ไม่ใช้ new Date() แปลงซ้ำ
       let rawDateVal = document.getElementById('recordDate').value; 
       let textDate = rawDateVal;
       
       if (rawDateVal && rawDateVal.includes('-')) {
         let p = rawDateVal.split('-');
         if (p.length === 3) {
-          textDate = `${p[2]}/${p[1]}/${p[0]}`; // กลายเป็นข้อความ "18/10/2026" ทันที
+          textDate = `${p[2]}/${p[1]}/${p[0]}`; // แปลงเป้้นข้อความ "18/10/2026" โดยตรง
         }
       }
 
       let formData = {
-        recordDate: textDate, // ส่งเป็นข้อความตรงๆ
+        recordDate: textDate,
         clientName: document.getElementById('clientName').value,
         material: document.getElementById('material').value,
         deliveryPoint: document.getElementById('deliveryPoint').value,
@@ -379,13 +383,7 @@
         if(res.success) {
           closeModal();
           document.getElementById('jobForm').reset();
-          
-          let today = new Date();
-          let yyyy = today.getFullYear();
-          let mm = String(today.getMonth() + 1).padStart(2, '0');
-          let dd = String(today.getDate()).padStart(2, '0');
-          document.getElementById('recordDate').value = `${yyyy}-${mm}-${dd}`;
-          
+          document.getElementById('recordDate').value = getThaiTodayYMD();
           loadData();
         } else {
           alert('เกิดข้อผิดพลาด: ' + res.message);
