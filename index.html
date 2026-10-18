@@ -4,16 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UNISOURCE LAND FILL - เรทราคางานเงินสด</title>
+  <!-- โหลด Tailwind และ Font แบบเร่งด่วน (Optimized) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
   </style>
 </head>
 <body class="bg-[#F8FAFC] text-slate-800 min-h-screen flex flex-col m-0 p-0 overflow-x-hidden">
 
-<!-- Header -->
+  <!-- Header -->
   <header class="bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 text-white shadow-md border-b border-blue-900 w-full">
     <div class="w-full px-4 sm:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
       <div class="flex items-center space-x-4 w-full sm:w-auto justify-between sm:justify-start">
@@ -115,7 +118,7 @@
 
   <!-- Modal บันทึกเรทราคาใหม่ -->
   <div id="jobModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full overflow-hidden border border-slate-100 animate-in fade-in zoom-in duration-200">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full overflow-hidden border border-slate-100">
       <div class="bg-gradient-to-r from-blue-950 to-indigo-950 px-6 py-4 text-white flex justify-between items-center">
         <h3 class="font-bold text-base flex items-center gap-2">บันทึกเรทราคางานใหม่</h3>
         <button onclick="closeModal()" class="text-blue-200 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
@@ -198,7 +201,7 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbwQ2KPKg18NBlfVWNagDQxuuZKnBlvQuszVpvvVRiLTCKcj3DU410Ve-COc9p-WTCw/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxYxsUUTmwHEo0KFHJdRXsVeD7unwC8CP4M7AWKknDJf_lmF1PwV_hCmALUA0wl7IVC/exec";
 
     let rawJobData = [];
 
@@ -325,8 +328,17 @@
       btn.disabled = true;
       btn.innerHTML = `กำลังบันทึก...`;
 
+      let rawDateVal = document.getElementById('recordDate').value;
+      let formattedSaveDate = rawDateVal;
+      if (rawDateVal && rawDateVal.includes('-')) {
+        let parts = rawDateVal.split('-');
+        if (parts.length === 3) {
+          formattedSaveDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+      }
+
       let formData = {
-        recordDate: document.getElementById('recordDate').value,
+        recordDate: formattedSaveDate,
         clientName: document.getElementById('clientName').value,
         material: document.getElementById('material').value,
         deliveryPoint: document.getElementById('deliveryPoint').value,
