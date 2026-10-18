@@ -169,9 +169,10 @@
             <select id="unit" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm bg-white">
               <option value="" disabled selected>-- เลือกหน่วย --</option>
               <option value="พ่วง">พ่วง</option>
-              <option value="ตัน">ตัน</option>
-              <option value="เดี่ยว">เดี่ยว</option>
               <option value="ลบ.ม.">ลบ.ม.</option>
+              <option value="เดี่ยว">เดี่ยว</option>
+              <option value="ตัน/เดี่ยว">ตัน/เดี่ยว</option>
+              <option value="ตัน/พ่วง">ตัน/พ่วง</option>
             </select>
           </div>
           <div>
@@ -215,9 +216,7 @@
     }
 
     window.onload = function() {
-      // ตั้งค่าเริ่มต้นช่องปฏิทินให้เป็นเวลาไทย
       document.getElementById('recordDate').value = getThaiTodayYMD();
-      
       loadData();
       loadOilPrices();
     };
@@ -317,7 +316,6 @@
         let rawDate = String(row.recordDate || '');
         let displayDate = rawDate;
 
-        // ดึงเฉพาะตัวอักษรวันที่ DD/MM/YYYY หรือสลับ YYYY-MM-DD แบบไม่คำนวณไทม์โซนซ้ำ
         if (rawDate.includes('T')) {
           let datePart = rawDate.split('T')[0];
           let p = datePart.split('-');
@@ -351,14 +349,13 @@
       btn.disabled = true;
       btn.innerHTML = `กำลังบันทึก...`;
 
-      // อ่านข้อความตรงๆ จากช่องปฏิทินที่เลือก (เช่น 2026-10-18) โดยตรง ไม่ใช้ new Date() แปลงซ้ำ
       let rawDateVal = document.getElementById('recordDate').value; 
       let textDate = rawDateVal;
       
       if (rawDateVal && rawDateVal.includes('-')) {
         let p = rawDateVal.split('-');
         if (p.length === 3) {
-          textDate = `${p[2]}/${p[1]}/${p[0]}`; // แปลงเป้้นข้อความ "18/10/2026" โดยตรง
+          textDate = `${p[2]}/${p[1]}/${p[0]}`;
         }
       }
 
