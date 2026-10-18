@@ -1,217 +1,12 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UNISOURCE LAND FILL - เรทราคางานเงินสด</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
-  <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
-  </style>
-</head>
-<body class="bg-[#F8FAFC] text-slate-800 min-h-screen flex flex-col m-0 p-0 overflow-x-hidden">
-
-  <!-- Header -->
-  <header class="bg-blue-950 text-white shadow-md border-b border-blue-900 w-full">
-    <div class="w-full px-4 sm:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-      <div class="flex items-center space-x-4 w-full sm:w-auto justify-between sm:justify-start">
-        <div class="flex-shrink-0 leading-none text-center flex flex-col items-center">
-          <h1 class="text-xl sm:text-2xl font-black tracking-wider text-white m-0 p-0 uppercase">UNISOURCE</h1>
-          <span class="text-xs sm:text-sm font-extrabold text-orange-600 tracking-widest mt-1 uppercase text-center block w-full">LAND FILL</span>
-        </div>
-        <div class="hidden sm:block h-10 w-px bg-blue-800"></div>
-        <div>
-          <h2 class="text-base sm:text-lg font-bold text-white tracking-wide">เรทราคางานเงินสด</h2>
-          <p class="text-[11px] sm:text-xs text-blue-200 font-medium">ระบบจัดการข้อมูลภายใน UNS</p>
-        </div>
-      </div>
-      <button onclick="openModal()" class="w-full sm:w-auto bg-white text-blue-950 hover:bg-blue-50 font-semibold px-5 py-2.5 rounded-xl shadow-md transition transform active:scale-95 flex items-center justify-center gap-2 text-sm border border-blue-100">
-        บันทึกเรทราคาใหม่
-      </button>
-    </div>
-  </header>
-
-  <!-- Main Content Layout -->
-  <main class="w-full px-4 sm:px-8 py-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
-    
-    <!-- ฝั่งซ้าย: ราคาน้ำมัน ปตท. (3/12) -->
-    <aside class="lg:col-span-3 space-y-4">
-      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 relative overflow-hidden">
-        <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
-        <div class="flex items-center justify-between mb-3">
-          <h2 class="font-bold text-slate-900 text-base">ราคาน้ำมัน ปตท.</h2>
-          <span class="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full font-semibold border border-blue-100">กทม.</span>
-        </div>
-        <p id="oilUpdateTime" class="text-xs text-slate-500 mb-4 pb-3 border-b border-slate-100">กำลังโหลด...</p>
-        <div id="oilPriceList" class="space-y-3">
-          <div class="animate-pulse space-y-3">
-            <div class="h-12 bg-slate-100 rounded-xl"></div>
-            <div class="h-12 bg-slate-100 rounded-xl"></div>
-          </div>
-        </div>
-      </div>
-    </aside>
-
-    <!-- ฝั่งขวา: รายการเรทราคางาน (9/12) -->
-    <section class="lg:col-span-9 space-y-4">
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-        <div class="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50 space-y-3">
-          <div class="flex justify-between items-center">
-            <div>
-              <h2 class="font-bold text-slate-900 text-base sm:text-lg">รายการเรทราคางานทั้งหมด</h2>
-              <p class="text-xs text-slate-500">แสดงข้อมูลงานและเรทราคาเงินสดที่บันทึกไว้ในระบบ</p>
-            </div>
-            <span id="totalCount" class="text-xs bg-slate-200 text-slate-700 font-semibold px-2.5 py-1 rounded-lg">0 รายการ</span>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 border-t border-slate-200/60">
-            <div>
-              <input type="text" id="searchInput" oninput="applyFilters()" placeholder="ค้นหา (ชื่อ, วัสดุ, จุดลง...)" class="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white shadow-sm">
-            </div>
-            <div>
-              <select id="filterClient" onchange="applyFilters()" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white shadow-sm text-slate-700">
-                <option value="">-- ผู้ว่าจ้างทั้งหมด --</option>
-              </select>
-            </div>
-            <div>
-              <select id="filterOilRange" onchange="applyFilters()" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white shadow-sm text-slate-700">
-                <option value="">-- เรทราคาน้ำมันทั้งหมด --</option>
-                <option value="น้ำมัน 30-35">น้ำมัน 30-35</option>
-                <option value="น้ำมัน 35-40">น้ำมัน 35-40</option>
-                <option value="น้ำมัน 40-45">น้ำมัน 40-45</option>
-                <option value="น้ำมัน 45-50">น้ำมัน 45-50</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-sm">
-            <thead>
-              <tr class="bg-slate-100/80 text-slate-600 uppercase text-[11px] tracking-wider font-semibold border-b border-slate-200">
-                <th class="py-3.5 px-4 pl-6">วันที่บันทึก</th>
-                <th class="py-3.5 px-4">ผู้ว่าจ้าง</th>
-                <th class="py-3.5 px-4">วัสดุ</th>
-                <th class="py-3.5 px-4">จุดลง</th>
-                <th class="py-3.5 px-4">ช่วงราคาน้ำมัน</th>
-                <th class="py-3.5 px-4 text-right">ราคางาน</th>
-                <th class="py-3.5 px-4 text-center">หน่วย</th>
-                <th class="py-3.5 px-4">ผู้บันทึก</th>
-                <th class="py-3.5 px-4 text-center pr-6">Map</th>
-              </tr>
-            </thead>
-            <tbody id="jobTableBody" class="divide-y divide-slate-100 text-slate-700">
-              <tr>
-                <td colspan="9" class="p-8 text-center text-slate-400">กำลังโหลดข้อมูล...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- Modal บันทึกเรทราคาใหม่ -->
-  <div id="jobModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full overflow-hidden border border-slate-100">
-      <div class="bg-blue-950 px-6 py-4 text-white flex justify-between items-center">
-        <h3 class="font-bold text-base flex items-center gap-2">บันทึกเรทราคางานใหม่</h3>
-        <button onclick="closeModal()" class="text-blue-200 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
-      </div>
-
-      <form id="jobForm" onsubmit="handleFormSubmit(event)" class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">วันที่บันทึก</label>
-            <!-- เปลี่ยนเป็น text หรือเลือกวันที่แบบปกติ -->
-            <input type="date" id="recordDate" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm bg-slate-50">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">ชื่อผู้ว่าจ้าง</label>
-            <input type="text" id="clientName" required placeholder="ระบุชื่อผู้ว่าจ้าง" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">วัสดุ</label>
-            <input type="text" id="material" required placeholder="เช่น หิน, ทราย, ดิน" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">จุดลง</label>
-            <input type="text" id="deliveryPoint" required placeholder="ระบุสถานที่ส่งของ" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">ช่วงราคาน้ำมัน</label>
-            <select id="oilPriceRange" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm bg-white">
-              <option value="" disabled selected>-- เลือกช่วงราคาน้ำมัน --</option>
-              <option value="น้ำมัน 30-35">น้ำมัน 30-35</option>
-              <option value="น้ำมัน 35-40">น้ำมัน 35-40</option>
-              <option value="น้ำมัน 40-45">น้ำมัน 40-45</option>
-              <option value="น้ำมัน 45-50">น้ำมัน 45-50</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">ราคางาน (บาท)</label>
-            <input type="number" step="0.01" id="jobPrice" required placeholder="0.00" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">หน่วย</label>
-            <select id="unit" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm bg-white">
-              <option value="" disabled selected>-- เลือกหน่วย --</option>
-              <option value="พ่วง">พ่วง</option>
-              <option value="ตัน">ตัน</option>
-              <option value="เดี่ยว">เดี่ยว</option>
-              <option value="ลบ.ม.">ลบ.ม.</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">ผู้บันทึก</label>
-            <select id="recorder" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm bg-white">
-              <option value="" disabled selected>-- เลือกผู้บันทึก --</option>
-              <option value="เจ">เจ</option>
-              <option value="ปลา">ปลา</option>
-              <option value="แป้ง">แป้ง</option>
-              <option value="เฟิร์ส">เฟิร์ส</option>
-            </select>
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">ลิงก์ Google Map</label>
-          <input type="url" id="mapLink" required placeholder="https://goo.gl/maps/..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-600 text-sm">
-        </div>
-
-        <div class="pt-4 flex justify-end gap-3 border-t border-slate-100">
-          <button type="button" onclick="closeModal()" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-100 font-semibold text-sm transition">ยกเลิก</button>
-          <button type="submit" id="submitBtn" class="px-6 py-2.5 rounded-xl bg-blue-950 hover:bg-blue-900 text-white font-semibold text-sm shadow-md transition">บันทึกข้อมูล</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <script>
+<script>
     const API_URL = "https://script.google.com/macros/s/AKfycbxYxsUUTmwHEo0KFHJdRXsVeD7unwC8CP4M7AWKknDJf_lmF1PwV_hCmALUA0wl7IVC/exec";
 
     let rawJobData = [];
 
     window.onload = function() {
-      // เซ็ตวันที่ปัจจุบันเป็น พ.ศ./ค.ศ. ตามปฏิทินเป๊ะๆ
-      let today = new Date();
-      let year = today.getFullYear();
-      let month = String(today.getMonth() + 1).padStart(2, '0');
-      let day = String(today.getDate()).padStart(2, '0');
-      document.getElementById('recordDate').value = `${year}-${month}-${day}`;
+      // เซ็ตค่าวันที่เริ่มต้นในฟอร์มแบบตัดข้อความธรรมดา (ไม่ใช้ new Date ที่พ่วงไทม์โซน)
+      let todayStr = new Date().toLocaleDateString('en-CA'); // ได้รูปแบบ YYYY-MM-DD ตามเวลาเครื่องเป๊ะ
+      document.getElementById('recordDate').value = todayStr;
       
       loadData();
       loadOilPrices();
@@ -310,7 +105,7 @@
       data.forEach(row => {
         let priceNum = parseFloat(row.jobPrice) || 0;
         
-        // หยิบข้อความจาก Google Sheets มาแสดงผลตรงๆ แบบตัวอักษร 100% ไม่คำนวณไทม์โซนใดๆ ทั้งสิ้น
+        // แสดงผลข้อความวันที่ตรงๆ จากหลังบ้านแบบ 100% ตัวอักษรต่อตัวอักษร ไม่มีการคำนวณใดๆ ทั้งสิ้น
         let displayDate = row.recordDate || '';
 
         html += `
@@ -338,13 +133,13 @@
       btn.disabled = true;
       btn.innerHTML = `กำลังบันทึก...`;
 
-      // ดึงค่าวันที่จากช่องเลือก แล้วแปลงเป็น DD/MM/YYYY แบบล็อกตรงๆ ทันที
-      let rawDateVal = document.getElementById('recordDate').value; // ได้ค่า YYYY-MM-DD
+      // แปลงค่า YYYY-MM-DD เป็น DD/MM/YYYY ด้วยการตัด String ธรรมดา (ไม่ใช้ Date object)
+      let rawDateVal = document.getElementById('recordDate').value; 
       let formattedDate = rawDateVal;
       if (rawDateVal && rawDateVal.includes('-')) {
         let p = rawDateVal.split('-');
         if (p.length === 3) {
-          formattedDate = `${p[2]}/${p[1]}/${p[0]}`; // เปลี่ยนเป็น DD/MM/YYYY ส่งไปบันทึก
+          formattedDate = `${p[2]}/${p[1]}/${p[0]}`; // ได้ "DD/MM/YYYY" ตรงเป๊ะ
         }
       }
 
@@ -369,13 +164,7 @@
         if(res.success) {
           closeModal();
           document.getElementById('jobForm').reset();
-          
-          let today = new Date();
-          let year = today.getFullYear();
-          let month = String(today.getMonth() + 1).padStart(2, '0');
-          let day = String(today.getDate()).padStart(2, '0');
-          document.getElementById('recordDate').value = `${year}-${month}-${day}`;
-          
+          document.getElementById('recordDate').value = new Date().toLocaleDateString('en-CA');
           loadData();
         } else {
           alert('เกิดข้อผิดพลาด: ' + res.message);
@@ -390,5 +179,3 @@
       });
     }
   </script>
-</body>
-</html>
