@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>UNISOURCE LAND FILL - เรทราคางานเงินสด</title>
+  <!-- โหลด Tailwind และ Font แบบเร่งด่วน (Optimized) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,14 +17,14 @@
 <body class="bg-[#F8FAFC] text-slate-800 min-h-screen flex flex-col m-0 p-0 overflow-x-hidden">
 
   <!-- Header -->
-  <header class="bg-blue-950 text-white shadow-md border-b border-blue-900 w-full">
+  <header class="bg-gradient-to-r from-blue-950 via-blue-900 to-indigo-950 text-white shadow-md border-b border-blue-900 w-full">
     <div class="w-full px-4 sm:px-8 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
       <div class="flex items-center space-x-4 w-full sm:w-auto justify-between sm:justify-start">
         <div class="flex-shrink-0 leading-none text-center flex flex-col items-center">
           <h1 class="text-xl sm:text-2xl font-black tracking-wider text-white m-0 p-0 uppercase">UNISOURCE</h1>
-          <span class="text-xs sm:text-sm font-extrabold text-orange-600 tracking-widest mt-1 uppercase text-center block w-full">LAND FILL</span>
+          <span class="text-xs sm:text-sm font-extrabold text-amber-500 tracking-widest mt-1 uppercase text-center block w-full">LAND FILL</span>
         </div>
-        <div class="hidden sm:block h-10 w-px bg-blue-800"></div>
+        <div class="hidden sm:block h-10 w-px bg-blue-700/60"></div>
         <div>
           <h2 class="text-base sm:text-lg font-bold text-white tracking-wide">เรทราคางานเงินสด</h2>
           <p class="text-[11px] sm:text-xs text-blue-200 font-medium">ระบบจัดการข้อมูลภายใน UNS</p>
@@ -118,7 +119,7 @@
   <!-- Modal บันทึกเรทราคาใหม่ -->
   <div id="jobModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full overflow-hidden border border-slate-100">
-      <div class="bg-blue-950 px-6 py-4 text-white flex justify-between items-center">
+      <div class="bg-gradient-to-r from-blue-950 to-indigo-950 px-6 py-4 text-white flex justify-between items-center">
         <h3 class="font-bold text-base flex items-center gap-2">บันทึกเรทราคางานใหม่</h3>
         <button onclick="closeModal()" class="text-blue-200 hover:text-white transition"><i class="fa-solid fa-xmark text-lg"></i></button>
       </div>
@@ -205,9 +206,7 @@
     let rawJobData = [];
 
     window.onload = function() {
-      let todayStr = new Date().toLocaleDateString('en-CA');
-      document.getElementById('recordDate').value = todayStr;
-      
+      document.getElementById('recordDate').valueAsDate = new Date();
       loadData();
       loadOilPrices();
     };
@@ -304,28 +303,9 @@
       let html = '';
       data.forEach(row => {
         let priceNum = parseFloat(row.jobPrice) || 0;
-        
-        // จัดการแปลงวันที่ให้แสดงผลเป็น DD/MM/YYYY อย่างสะอาดเรียบร้อย ป้องกันปัญหาตัว T ห้อยท้าย
-        let rawDate = String(row.recordDate || '');
-        let displayDate = rawDate;
-        
-        if (rawDate.includes('T')) {
-          let datePart = rawDate.split('T')[0];
-          let p = datePart.split('-');
-          if (p.length === 3) {
-            displayDate = `${p[2]}/${p[1]}/${p[0]}`;
-          }
-        } else if (rawDate.includes('-') && rawDate.length >= 10) {
-          let datePart = rawDate.substring(0, 10);
-          let p = datePart.split('-');
-          if (p.length === 3) {
-            displayDate = `${p[2]}/${p[1]}/${p[0]}`;
-          }
-        }
-
         html += `
           <tr class="hover:bg-slate-50 transition duration-150">
-            <td class="py-3.5 px-4 pl-6 font-medium text-slate-600 text-xs">${displayDate}</td>
+            <td class="py-3.5 px-4 pl-6 font-medium text-slate-600 text-xs">${row.recordDate || ''}</td>
             <td class="py-3.5 px-4 font-semibold text-slate-900">${row.clientName || ''}</td>
             <td class="py-3.5 px-4 text-slate-700">${row.material || ''}</td>
             <td class="py-3.5 px-4 text-slate-700">${row.deliveryPoint || ''}</td>
@@ -348,17 +328,17 @@
       btn.disabled = true;
       btn.innerHTML = `กำลังบันทึก...`;
 
-      let rawDateVal = document.getElementById('recordDate').value; 
-      let formattedDate = rawDateVal;
+      let rawDateVal = document.getElementById('recordDate').value;
+      let formattedSaveDate = rawDateVal;
       if (rawDateVal && rawDateVal.includes('-')) {
-        let p = rawDateVal.split('-');
-        if (p.length === 3) {
-          formattedDate = `${p[2]}/${p[1]}/${p[0]}`;
+        let parts = rawDateVal.split('-');
+        if (parts.length === 3) {
+          formattedSaveDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
         }
       }
 
       let formData = {
-        recordDate: formattedDate,
+        recordDate: formattedSaveDate,
         clientName: document.getElementById('clientName').value,
         material: document.getElementById('material').value,
         deliveryPoint: document.getElementById('deliveryPoint').value,
@@ -378,7 +358,7 @@
         if(res.success) {
           closeModal();
           document.getElementById('jobForm').reset();
-          document.getElementById('recordDate').value = new Date().toLocaleDateString('en-CA');
+          document.getElementById('recordDate').valueAsDate = new Date();
           loadData();
         } else {
           alert('เกิดข้อผิดพลาด: ' + res.message);
