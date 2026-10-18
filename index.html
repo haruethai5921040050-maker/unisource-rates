@@ -105,8 +105,24 @@
       data.forEach(row => {
         let priceNum = parseFloat(row.jobPrice) || 0;
         
-        // แสดงผลข้อความวันที่ตรงๆ จากหลังบ้านแบบ 100% ตัวอักษรต่อตัวอักษร ไม่มีการคำนวณใดๆ ทั้งสิ้น
-        let displayDate = row.recordDate || '';
+        // แปลงร่างข้อความวันที่ทั้งหมดให้เป็น DD/MM/YYYY ทันทีก่อนแสดงผล
+        let rawDate = String(row.recordDate || '');
+        let displayDate = rawDate;
+        
+        if (rawDate.includes('T')) {
+          // ตัดตัว T และเวลาทิ้ง เอาเฉพาะส่วนหน้า (เช่น 2026-10-17) แล้วสลับเป็น DD/MM/YYYY
+          let datePart = rawDate.split('T')[0];
+          let p = datePart.split('-');
+          if (p.length === 3) {
+            displayDate = `${p[2]}/${p[1]}/${p[0]}`;
+          }
+        } else if (rawDate.includes('-') && rawDate.length >= 10) {
+          let datePart = rawDate.substring(0, 10);
+          let p = datePart.split('-');
+          if (p.length === 3) {
+            displayDate = `${p[2]}/${p[1]}/${p[0]}`;
+          }
+        }
 
         html += `
           <tr class="hover:bg-slate-50 transition duration-150">
