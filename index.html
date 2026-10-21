@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
   </style>
@@ -38,7 +38,7 @@
   <!-- Main Content Layout -->
   <main class="w-full px-4 sm:px-8 py-6 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6">
     
-    <!-- ฝั่งซ้าย: ราคาน้ำมัน ปตท. (3/12) -->
+    <!-- ฝั่งซ้าย: ราคาน้ำมัน ปตท. -->
     <aside class="lg:col-span-3 space-y-4">
       <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 relative overflow-hidden">
         <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
@@ -56,7 +56,7 @@
       </div>
     </aside>
 
-    <!-- ฝั่งขวา: รายการเรทราคางาน (9/12) -->
+    <!-- ฝั่งขวา: รายการเรทราคางาน -->
     <section class="lg:col-span-9 space-y-4">
       <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
         <div class="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/50 space-y-3">
@@ -201,11 +201,11 @@
   </div>
 
   <script>
+    // อย่าลืมเช็กให้แน่ใจว่า API_URL เป็นลิงก์ปัจจุบันของคุณ
     const API_URL = "https://script.google.com/macros/s/AKfycbxcudNfvAQONDUlKuhLetemzATqUXyShT47BMFRzBejoWGNdSaeV_AqocJs2wWqg_-y/exec";
 
     let rawJobData = [];
 
-    // ฟังก์ชันคืนค่าวันที่ปัจจุบันตามโซนเวลาไทย (Asia/Bangkok)
     function getThaiTodayYMD() {
       let now = new Date();
       let thaiTime = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Bangkok"}));
@@ -236,17 +236,28 @@
           document.getElementById('oilUpdateTime').innerText = `อัพเดตล่าสุด วันนี้`;
           let html = '';
           res.prices.forEach(item => {
-            let badgeColor = 'bg-slate-100 text-slate-700';
-            if (item.status === 'เพิ่มขึ้น') badgeColor = 'bg-rose-50 text-rose-700 border border-rose-100';
-            else if (item.status === 'ลดลง') badgeColor = 'bg-emerald-50 text-emerald-700 border border-emerald-100';
-            else badgeColor = 'bg-amber-50 text-amber-700 border border-amber-100';
+            
+            let statusHtml = '';
+            
+            // เช็กคำว่า "เพิ่มขึ้น", "ลดลง" หรือ "คงที่" เพื่อปรับสีและไอคอน
+            if (item.status.includes('เพิ่มขึ้น')) {
+              let val = item.status.replace('เพิ่มขึ้น ', '').trim();
+              statusHtml = `<span class="text-red-600 font-bold text-xs"><i class="fa-solid fa-caret-up mr-1"></i>+${val}</span>`;
+            } 
+            else if (item.status.includes('ลดลง')) {
+              let val = item.status.replace('ลดลง ', '').trim();
+              statusHtml = `<span class="text-green-600 font-bold text-xs"><i class="fa-solid fa-caret-down mr-1"></i>-${val}</span>`;
+            } 
+            else {
+              statusHtml = `<span class="text-blue-600 font-bold text-xs">คงที่</span>`;
+            }
 
             html += `
               <div class="p-3 bg-slate-50/70 rounded-xl border border-slate-100 flex flex-col gap-1">
                 <div class="text-xs font-bold text-slate-800">${item.fuelType}</div>
                 <div class="flex justify-between items-center">
                   <span class="text-sm font-extrabold text-blue-900">${item.price.toFixed(2)} <span class="text-[10px] font-normal text-slate-500">บาท/ลิตร</span></span>
-                  <span class="text-[11px] font-semibold px-2 py-0.5 rounded-md ${badgeColor}">${item.status}</span>
+                  ${statusHtml}
                 </div>
               </div>
             `;
@@ -314,10 +325,16 @@
       data.forEach(row => {
         let priceNum = parseFloat(row.jobPrice) || 0;
         let rawDate = String(row.recordDate || '');
+        
+        // ตัดเครื่องหมาย ' ออกเวลาโชว์บนตาราง
+        if (rawDate.startsWith("'")) {
+          rawDate = rawDate.substring(1);
+        }
+        
         let displayDate = rawDate;
 
-        if (rawDate.includes('T')) {
-          let datePart = rawDate.split('T')[0];
+        if (displayDate.includes('T')) {
+          let datePart = displayDate.split('T')[0];
           let p = datePart.split('-');
           if (p.length === 3) {
             displayDate = `${p[2]}/${p[1]}/${p[0]}`;
@@ -352,10 +369,11 @@
       let rawDateVal = document.getElementById('recordDate').value; 
       let textDate = rawDateVal;
       
+      // บังคับเติมเครื่องหมาย ' ป้องกันหลังบ้านแปลงเป็นวันที่
       if (rawDateVal && rawDateVal.includes('-')) {
         let p = rawDateVal.split('-');
         if (p.length === 3) {
-          textDate = `${p[2]}/${p[1]}/${p[0]}`;
+          textDate = `'${p[2]}/${p[1]}/${p[0]}`; 
         }
       }
 
